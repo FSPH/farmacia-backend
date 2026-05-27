@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    /* Configurações Base */
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictPropertyInitialization": true,
+
+    /* Configurações de Caminho */
+    "rootDir": "./",           // Indica que a raiz do código é a pasta backend
+    "outDir": "./dist",        // Onde o código compilado será salvo
+    "removeComments": true,    // Limpa o código para produção
+    "sourceMap": false         // Desativado para produção (economiza espaço)
+  },
+  "include": ["**/*.ts"],      // Pega todos os arquivos TS na pasta backend
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}
