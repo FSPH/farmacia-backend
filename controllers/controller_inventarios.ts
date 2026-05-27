@@ -2,25 +2,9 @@ import { Request, Response } from 'express';
 import Database, { iDatabase } from '../connections/dbconn.js';
 import Service_Inventarios from '../services/service_inventarios.js';
 import { iresdata } from './interface_controllers.js';
-import GravarLog from '../utils/gravarLogsError.js';
+import { assignControllerError, safeDisconnect, safeRollback } from './controller_helpers.js';
 
 export default class Controller_Inventarios {
-
-    private static async SafeRollback(db: iDatabase): Promise<void> {
-        try {
-            await db.Rollback();
-        } catch (_error) {
-            // Ignora rollback secundário para preservar o erro principal.
-        }
-    }
-
-    private static async SafeDisconnect(db: iDatabase): Promise<void> {
-        try {
-            await db.Disconnect();
-        } catch (_error) {
-            // Ignora erro de cleanup da conexão.
-        }
-    }
 
     static async Listar(req: Request, res: Response) {
 
@@ -81,17 +65,10 @@ export default class Controller_Inventarios {
             });
 
         } catch (error: any) {
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Inventarios - Erro inesperado ao listar: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Inventarios');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await Controller_Inventarios.SafeDisconnect(db);
 
         return res.status(resdata.status).json(resdata);
     }
@@ -163,19 +140,11 @@ export default class Controller_Inventarios {
             resdata.msg = 'Inventário criado com sucesso.';
 
         } catch (error: any) {
-
-            await Controller_Inventarios.SafeRollback(db);
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Inventarios - Erro inesperado ao criar: ${error.stack}`);
-            }
+            await safeRollback(db);
+            assignControllerError(resdata, error, 'Controller Inventarios');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await Controller_Inventarios.SafeDisconnect(db);
 
         return res.status(resdata.status).json(resdata);
     }
@@ -206,17 +175,10 @@ export default class Controller_Inventarios {
             resdata.data = await Service_Inventarios.ListarItens(db.connection, inv_id);
 
         } catch (error: any) {
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Inventarios - Erro inesperado ao listar itens: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Inventarios');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await Controller_Inventarios.SafeDisconnect(db);
 
         return res.status(resdata.status).json(resdata);
     }
@@ -262,19 +224,11 @@ export default class Controller_Inventarios {
             resdata.msg = 'Contagem atualizada com sucesso.';
 
         } catch (error: any) {
-
-            await Controller_Inventarios.SafeRollback(db);
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Inventarios - Erro inesperado ao atualizar item: ${error.stack}`);
-            }
+            await safeRollback(db);
+            assignControllerError(resdata, error, 'Controller Inventarios');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await Controller_Inventarios.SafeDisconnect(db);
 
         return res.status(resdata.status).json(resdata);
     }
@@ -310,19 +264,11 @@ export default class Controller_Inventarios {
             resdata.msg = 'Inventário fechado com sucesso.';
 
         } catch (error: any) {
-
-            await Controller_Inventarios.SafeRollback(db);
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Inventarios - Erro inesperado ao fechar: ${error.stack}`);
-            }
+            await safeRollback(db);
+            assignControllerError(resdata, error, 'Controller Inventarios');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await Controller_Inventarios.SafeDisconnect(db);
 
         return res.status(resdata.status).json(resdata);
     }

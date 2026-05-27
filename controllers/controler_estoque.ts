@@ -1,8 +1,12 @@
 import Database, { iDatabase } from '../connections/dbconn.js';
 import type { Request, Response } from 'express';
-import GravarLog from '../utils/gravarLogsError.js';
 import type { iresdata } from './interface_controllers.js';
 import Estoque from '../model/dao_estoque.js';
+import {
+    assignControllerError,
+    safeDisconnect,
+    safeRollback,
+} from './controller_helpers.js';
 
 function parseNumber(value: any): number {
     const parsed = Number(value || 0);
@@ -44,15 +48,9 @@ export default class Controller_Estoque {
                 dias_alerta,
             });
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Estoque');
         } finally {
-            await db.Disconnect();
+            await safeDisconnect(db);
         }
 
         return res.status(resdata.status).json(resdata);
@@ -91,15 +89,9 @@ export default class Controller_Estoque {
                 }),
             };
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Estoque');
         } finally {
-            await db.Disconnect();
+            await safeDisconnect(db);
         }
 
         return res.status(resdata.status).json(resdata);
@@ -130,15 +122,9 @@ export default class Controller_Estoque {
             const estoque = new Estoque(db.connection);
             resdata.data = await estoque.ListarMovimentacao(med_id, lote);
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Estoque');
         } finally {
-            await db.Disconnect();
+            await safeDisconnect(db);
         }
 
         return res.status(resdata.status).json(resdata);
@@ -178,15 +164,9 @@ export default class Controller_Estoque {
 
             resdata.data = result;
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Estoque');
         } finally {
-            await db.Disconnect();
+            await safeDisconnect(db);
         }
         
         return res.status(resdata.status).json(resdata);
@@ -203,6 +183,12 @@ export default class Controller_Estoque {
         };
 
         try {
+            if (process.env.ALLOW_STOCK_DIRECT_WRITE !== 'true') {
+                const error = new Error('Ajuste direto de estoque desabilitado. Use os fluxos de entrada, transferência ou inventário.') as any;
+                error.statusCode = 403;
+                throw error;
+            }
+
             await db.Connect();
             await db.Begin();
 
@@ -271,17 +257,10 @@ export default class Controller_Estoque {
                 est_validade: estoque.est_validade,
             };
         } catch (error: any) {
-            await db.Rollback();
-            
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
-            }
+            await safeRollback(db);
+            assignControllerError(resdata, error, 'Controller Estoque');
         } finally {
-            await db.Disconnect();
+            await safeDisconnect(db);
         }
         
         return res.status(resdata.status).json(resdata);
@@ -367,17 +346,10 @@ export default class Controller_Estoque {
                 },
             };
         } catch (error: any) {
-            await db.Rollback();
-            
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
-            }
+            await safeRollback(db);
+            assignControllerError(resdata, error, 'Controller Estoque');
         } finally {
-            await db.Disconnect();
+            await safeDisconnect(db);
         }
         
         return res.status(resdata.status).json(resdata);

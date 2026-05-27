@@ -1,12 +1,16 @@
 import Database, { iDatabase } from '../connections/dbconn.js';
 import type { Request, Response } from 'express';
-import GravarLog from '../utils/gravarLogsError.js';
 import type { iresdata } from './interface_controllers.js';
 import Requisicoes from '../model/dao_requisicoes.js';
 import Gaucher from '../model/dao_gaucher.js';
 import Estoque from '../model/dao_estoque.js';
 import Medicamentos from '../model/dao_medicamentos.js';
 import Pacientes from '../model/dao_pacientes.js';
+import {
+    assignControllerError,
+    safeDisconnect,
+    safeRollback,
+} from './controller_helpers.js';
 
 function parseDate(value: any): Date {
     return new Date(String(value || ''));
@@ -57,16 +61,10 @@ export default class Controller_Requisicoes {
             const requisicoes = new Requisicoes(db.connection);
             resdata.data = await requisicoes.ListarPorPeriodo(dat_ini, dat_fim, aprova, tipo || undefined);
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Requisicoes');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }
@@ -103,16 +101,10 @@ export default class Controller_Requisicoes {
             
             resdata.data = result;
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Requisicoes');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }
@@ -274,18 +266,11 @@ export default class Controller_Requisicoes {
                 req_solicitado_por: requisicoes.req_solicitado_por,
             };
         } catch (error: any) {
-            await db.Rollback();
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
-            }
+            await safeRollback(db);
+            assignControllerError(resdata, error, 'Controller Requisicoes');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }
@@ -359,18 +344,11 @@ export default class Controller_Requisicoes {
                 saldo_atual: estoque.est_saldo,
             };
         } catch (error: any) {
-            await db.Rollback();
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
-            }
+            await safeRollback(db);
+            assignControllerError(resdata, error, 'Controller Requisicoes');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }

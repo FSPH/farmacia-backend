@@ -1,5 +1,4 @@
 import { Connection, RowDataPacket } from "mysql2/promise";
-import Database,{iDatabase} from "../connections/dbconn.js";
 import BaseModel,{iBaseModel} from "./BaseModel.js";
 
 export interface iGaucherFields {

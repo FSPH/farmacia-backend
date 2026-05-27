@@ -12,15 +12,19 @@ export interface iDatabase {
 
 export default class Database implements iDatabase {
 
-    private conn: Connection = {} as Connection;
+    private conn: Connection | null = null;
     private dbname: string;
+    private transactionActive = false;
 
     constructor(dbname: string = 'fsph_farmacia') {
         this.dbname = dbname;
     }
 
     public async Connect() : Promise<void> {
- 
+        if (this.conn) {
+            return;
+        }
+
         this.conn = await createConnection({
             host: process.env.DB_HOST || '172.23.42.17',
             port: Number(process.env.DB_PORT || 3306),
@@ -35,34 +39,48 @@ export default class Database implements iDatabase {
        
     }
 
-    get connection(): Connection {return this.conn;}
+    get connection(): Connection {
+        if (!this.conn) {
+            throw new Error('Conexão com banco de dados não inicializada.');
+        }
+
+        return this.conn;
+    }
 
     public async Disconnect(): Promise<void> {
-    
-        if (this.conn) {
-            await this.conn.end();
-            this.conn = {} as Connection;
+        if (!this.conn) {
+            return;
         }
+
+        await this.conn.end();
+        this.conn = null;
+        this.transactionActive = false;
     }
 
     public async Begin(): Promise<void> {
-
-        if (this.conn) {
-            await this.conn.beginTransaction();
+        if (!this.conn || this.transactionActive) {
+            return;
         }
+
+        await this.conn.beginTransaction();
+        this.transactionActive = true;
     }
 
     public async Commit(): Promise<void> {
-
-        if (this.conn) {
-            await this.conn.commit();
+        if (!this.conn || !this.transactionActive) {
+            return;
         }
+
+        await this.conn.commit();
+        this.transactionActive = false;
     }
 
     public async Rollback(): Promise<void> {
-
-        if (this.conn) {
-            await this.conn.rollback();
+        if (!this.conn || !this.transactionActive) {
+            return;
         }
+
+        await this.conn.rollback();
+        this.transactionActive = false;
     }
 }       

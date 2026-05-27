@@ -19,6 +19,8 @@ export interface iRequisicoesFields {
 }
 
 export default class Requisicoes extends BaseModel implements iRequisicoesFields, iBaseModel {
+    private connection: Connection;
+    private originalKey: { req_id: number; req_med_id: number; req_lote: string } | null;
     
     constructor(connection : Connection) {
         
@@ -44,6 +46,8 @@ export default class Requisicoes extends BaseModel implements iRequisicoesFields
         };
         
         super(connection,'tb_requisicoes',initFields,'req_id');
+        this.connection = connection;
+        this.originalKey = null;
     }
 
     get found(): boolean {return this._found;}
@@ -89,6 +93,175 @@ export default class Requisicoes extends BaseModel implements iRequisicoesFields
 
     set req_aprovado_por(aprovado_por: string) { this._fields.req_aprovado_por = aprovado_por;}
     get req_aprovado_por(): string {return this._fields.req_aprovado_por;}
+
+    private registerOriginalKey(): void {
+        this.originalKey = {
+            req_id: this.req_id,
+            req_med_id: this.req_med_id,
+            req_lote: this.req_lote,
+        };
+    }
+
+    private buildPersistedFields() {
+        return {
+            req_id: this.req_id,
+            req_tipo: this.req_tipo || null,
+            req_pac_id: this.req_pac_id || null,
+            req_date: this.req_date,
+            req_med_id: this.req_med_id,
+            req_qtde: this.req_qtde,
+            req_lote: this.req_lote,
+            req_val_mes: this.req_val_mes || null,
+            req_val_ano: this.req_val_ano || null,
+            req_dep_id: this.req_dep_id || null,
+            req_local_id: this.req_local_id || null,
+            req_aprova: this.req_aprova,
+            req_solicitado_por: this.req_solicitado_por || null,
+            req_aprovado_por: this.req_aprovado_por || null,
+        };
+    }
+
+    private async nextReqId(): Promise<number> {
+        const query = `
+            SELECT IFNULL(MAX(req_id), 0) + 1 as newid
+            FROM tb_requisicoes
+            FOR UPDATE
+        `;
+
+        const [rows] = await this.connection.query(query) as RowDataPacket[];
+        return Number(rows[0].newid);
+    }
+
+    async BuscarPorId(req_id: number): Promise<RowDataPacket> {
+        const query = `
+            SELECT *
+            FROM tb_requisicoes
+            WHERE req_id = :req_id
+            ORDER BY req_med_id, req_lote
+            LIMIT 1
+        `;
+
+        const [rows] = await this.connection.query(query, { req_id }) as RowDataPacket[];
+
+        if (rows && rows.length > 0) {
+            this.populateFromRow(rows[0]);
+            this._found = true;
+            this.registerOriginalKey();
+        } else {
+            this._found = false;
+            this.originalKey = null;
+        }
+
+        return this._fields;
+    }
+
+    async BuscarPorChave(req_id: number, req_med_id: number, req_lote: string): Promise<RowDataPacket> {
+        const query = `
+            SELECT *
+            FROM tb_requisicoes
+            WHERE req_id = :req_id
+              AND req_med_id = :req_med_id
+              AND req_lote = :req_lote
+            LIMIT 1
+        `;
+
+        const [rows] = await this.connection.query(query, {
+            req_id,
+            req_med_id,
+            req_lote,
+        }) as RowDataPacket[];
+
+        if (rows && rows.length > 0) {
+            this.populateFromRow(rows[0]);
+            this._found = true;
+            this.registerOriginalKey();
+        } else {
+            this._found = false;
+            this.originalKey = null;
+        }
+
+        return this._fields;
+    }
+
+    async Salvar(): Promise<void> {
+        if (!this._found && !this.req_id) {
+            this.req_id = await this.nextReqId();
+        }
+
+        const fields = this.buildPersistedFields();
+
+        if (this._found && this.originalKey) {
+            const updateQuery = `
+                UPDATE tb_requisicoes
+                SET req_id = :req_id,
+                    req_tipo = :req_tipo,
+                    req_pac_id = :req_pac_id,
+                    req_date = :req_date,
+                    req_med_id = :req_med_id,
+                    req_qtde = :req_qtde,
+                    req_lote = :req_lote,
+                    req_val_mes = :req_val_mes,
+                    req_val_ano = :req_val_ano,
+                    req_dep_id = :req_dep_id,
+                    req_local_id = :req_local_id,
+                    req_aprova = :req_aprova,
+                    req_solicitado_por = :req_solicitado_por,
+                    req_aprovado_por = :req_aprovado_por
+                WHERE req_id = :original_req_id
+                  AND req_med_id = :original_req_med_id
+                  AND req_lote = :original_req_lote
+            `;
+
+            await this.connection.query(updateQuery, {
+                ...fields,
+                original_req_id: this.originalKey.req_id,
+                original_req_med_id: this.originalKey.req_med_id,
+                original_req_lote: this.originalKey.req_lote,
+            });
+        } else {
+            const insertQuery = `
+                INSERT INTO tb_requisicoes
+                SET req_id = :req_id,
+                    req_tipo = :req_tipo,
+                    req_pac_id = :req_pac_id,
+                    req_date = :req_date,
+                    req_med_id = :req_med_id,
+                    req_qtde = :req_qtde,
+                    req_lote = :req_lote,
+                    req_val_mes = :req_val_mes,
+                    req_val_ano = :req_val_ano,
+                    req_dep_id = :req_dep_id,
+                    req_local_id = :req_local_id,
+                    req_aprova = :req_aprova,
+                    req_solicitado_por = :req_solicitado_por,
+                    req_aprovado_por = :req_aprovado_por
+            `;
+
+            await this.connection.query(insertQuery, fields);
+        }
+
+        this._found = true;
+        this.registerOriginalKey();
+    }
+
+    async Excluir(id?: number): Promise<void> {
+        if (this.originalKey) {
+            const deleteQuery = `
+                DELETE FROM tb_requisicoes
+                WHERE req_id = :req_id
+                  AND req_med_id = :req_med_id
+                  AND req_lote = :req_lote
+            `;
+
+            await this.connection.query(deleteQuery, this.originalKey);
+            return;
+        }
+
+        await this.connection.query(
+            'DELETE FROM tb_requisicoes WHERE req_id = :req_id',
+            { req_id: id || this.req_id },
+        );
+    }
 
     public async ListarPorPeriodo(dat_ini: Date, dat_fim: Date, aprova?: 0 | 1, tipo?: string) : Promise<iRequisicoesFields[]>{
 

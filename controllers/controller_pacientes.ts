@@ -2,7 +2,10 @@ import Database, { iDatabase } from '../connections/dbconn.js';
 import Pacientes from '../model/dao_pacientes.js';
 import type { Request, Response } from 'express';
 import type { iresdata } from './interface_controllers.js';
-import GravarLog from '../utils/gravarLogsError.js';
+import {
+    assignControllerError,
+    safeDisconnect,
+} from './controller_helpers.js';
 
 export default class Controller_Pacientes {
     static async Listar(req: Request, res: Response) {
@@ -24,16 +27,10 @@ export default class Controller_Pacientes {
 
             resdata.data = await pacientes.Listar(q, limit);
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Pacientes - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Pacientes');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }
@@ -70,16 +67,10 @@ export default class Controller_Pacientes {
 
             resdata.data = paciente;
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Pacientes - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Pacientes');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }

@@ -2,7 +2,7 @@ import Database, { iDatabase } from '../connections/dbconn.js';
 import TiposRequisicoes, { iTiposRequisicoesFields } from '../model/dao_tipos_requisicoes.js';
 import type { Request, Response } from 'express';
 import type { iresdata } from './interface_controllers.js';
-import GravarLog from '../utils/gravarLogsError.js';
+import { assignControllerError, safeDisconnect } from './controller_helpers.js';
 
 export default class Controller_TiposRequisicoes {
     static async Listar(req: Request, res: Response) {
@@ -21,16 +21,10 @@ export default class Controller_TiposRequisicoes {
             const tipos = new TiposRequisicoes(db.connection);
             resdata.data = await tipos.Listar() as iTiposRequisicoesFields[];
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Tipos Requisições - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Tipos Requisições');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }
@@ -67,16 +61,10 @@ export default class Controller_TiposRequisicoes {
 
             resdata.data = data;
         } catch (error: any) {
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? 'Erro desconhecido' : error.message;
-
-            if (resdata.status === 500) {
-                GravarLog(`Controller Tipos Requisições - Erro inesperado: ${error.stack}`);
-            }
+            assignControllerError(resdata, error, 'Controller Tipos Requisições');
+        } finally {
+            await safeDisconnect(db);
         }
-
-        await db.Disconnect();
 
         return res.status(resdata.status).json(resdata);
     }
