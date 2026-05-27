@@ -17,6 +17,6 @@
     "removeComments": true,    // Limpa o código para produção
     "sourceMap": false         // Desativado para produção (economiza espaço)
   },
-  "include": ["**/*.ts"],      // Pega todos os arquivos TS na pasta backend
+  "include": ["**/*.ts", "**/*.d.ts"],      // Pega todos os arquivos TS na pasta backend
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

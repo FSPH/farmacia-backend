@@ -1,4 +1,5 @@
-import {createConnection,Connection} from 'mysql2/promise';
+import 'dotenv/config';
+import { createConnection, Connection } from 'mysql2/promise';
 
 export interface iDatabase {
     connection : Connection,
@@ -21,13 +22,15 @@ export default class Database implements iDatabase {
     public async Connect() : Promise<void> {
  
         this.conn = await createConnection({
-            host: '172.23.42.17',
-            user: 'apiuser',
-            password: 'Abcd@1234!',
+            host: process.env.DB_HOST || '172.23.42.17',
+            port: Number(process.env.DB_PORT || 3306),
+            user: process.env.DB_USER || 'apiuser',
+            password: process.env.DB_PASS || 'Abcd@1234!',
             database: this.dbname,
             namedPlaceholders: true,
             decimalNumbers: true,
-            dateStrings: true
+            dateStrings: true,
+            charset: 'utf8mb4'
         });
        
     }

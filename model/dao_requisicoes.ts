@@ -3,6 +3,7 @@ import BaseModel,{iBaseModel} from "./BaseModel.js";
 
 export interface iRequisicoesFields {
     req_id : number,
+    req_tipo: string,
     req_pac_id : number,
     req_date : Date,
     req_med_id : number,
@@ -15,7 +16,6 @@ export interface iRequisicoesFields {
     req_aprova: 0 | 1,
     req_solicitado_por: string,
     req_aprovado_por: string,
-    req_tipo: string
 }
 
 export default class Requisicoes extends BaseModel implements iRequisicoesFields, iBaseModel {
@@ -28,6 +28,7 @@ export default class Requisicoes extends BaseModel implements iRequisicoesFields
         
         const initFields : iRequisicoesFields = {
             req_id: 0,
+            req_tipo: '',
             req_pac_id: 0,
             req_date: new Date(),
             req_med_id: 0,
@@ -40,7 +41,6 @@ export default class Requisicoes extends BaseModel implements iRequisicoesFields
             req_aprova: 0,
             req_solicitado_por: '',
             req_aprovado_por: '',
-            req_tipo: ''
         };
         
         super(connection,'tb_requisicoes',initFields,'req_id');
@@ -90,19 +90,71 @@ export default class Requisicoes extends BaseModel implements iRequisicoesFields
     set req_aprovado_por(aprovado_por: string) { this._fields.req_aprovado_por = aprovado_por;}
     get req_aprovado_por(): string {return this._fields.req_aprovado_por;}
 
-    public async ListarPorPeriodo(dat_ini: Date, dat_fim: Date, aprova: 0 | 1 = 0) : Promise<iRequisicoesFields[]>{
+    public async ListarPorPeriodo(dat_ini: Date, dat_fim: Date, aprova?: 0 | 1, tipo?: string) : Promise<iRequisicoesFields[]>{
 
-        let query: string = `SELECT r.req_id as ID,r.req_date as data,p.nom_paciente as paciente, m.med_descr as medicamento, m.med_und as unidade, 
-                             r.req_lote as lote,r.req_qtde as quantidade
+        let query: string = `SELECT r.req_id as id,r.req_date as data,r.req_tipo as tipo_codigo, tr.tip_descr as tipo_descr,
+                             p.nom_paciente as paciente, l.local_descr as local_descr, d.dep_descr as deposito_descr,
+                             m.med_descr as medicamento, m.med_und as unidade, r.req_med_id as med_id,
+                             r.req_lote as lote,r.req_qtde as quantidade, r.req_aprova as aprovado,
+                             r.req_pac_id as paciente_id, r.req_dep_id as deposito_id, r.req_local_id as local_id,
+                             r.req_solicitado_por, r.req_aprovado_por
                              FROM tb_requisicoes r
                              LEFT JOIN fsph_ambulatorio.tb_pacientes p ON r.req_pac_id = p.num_paciente
                              LEFT JOIN tb_medicamentos m ON r.req_med_id = m.med_id
-                             WHERE r.req_date >= :dat_ini AND r.req_date <= :dat_fim AND r.req_aprova = :aprova`;
+                             LEFT JOIN tb_locais l ON r.req_local_id = l.local_id
+                             LEFT JOIN tb_depositos d ON r.req_dep_id = d.dep_id
+                             LEFT JOIN tb_tipos_requisicoes tr ON r.req_tipo = tr.tip_codigo
+                             WHERE r.req_date >= :dat_ini AND r.req_date <= :dat_fim`;
 
-        const [rows] = await this.ExecuteQuery(query, {dat_ini, dat_fim, aprova}) as RowDataPacket[];
+        const params: Record<string, any> = { dat_ini, dat_fim, aprova, tipo };
+
+        if (aprova !== undefined) {
+            query += ' AND r.req_aprova = :aprova';
+        }
+
+        if (tipo) {
+            query += ' AND r.req_tipo = :tipo';
+        }
+
+        query += ' ORDER BY r.req_date DESC, r.req_id DESC';
+
+        const [rows] = await this.ExecuteQuery(query, params) as RowDataPacket[];
 
         return rows as iRequisicoesFields[];
 
+    }
+
+    public async BuscarPorIdDetalhado(req_id: number) {
+        const query = `
+            SELECT
+                r.*,
+                p.nom_paciente,
+                m.med_descr,
+                m.med_descr_coml,
+                m.med_und,
+                l.local_descr,
+                d.dep_descr,
+                tr.tip_descr
+            FROM tb_requisicoes r
+            LEFT JOIN fsph_ambulatorio.tb_pacientes p ON r.req_pac_id = p.num_paciente
+            LEFT JOIN tb_medicamentos m ON r.req_med_id = m.med_id
+            LEFT JOIN tb_locais l ON r.req_local_id = l.local_id
+            LEFT JOIN tb_depositos d ON r.req_dep_id = d.dep_id
+            LEFT JOIN tb_tipos_requisicoes tr ON r.req_tipo = tr.tip_codigo
+            WHERE r.req_id = :req_id
+            LIMIT 1
+        `;
+
+        const [rows] = await this.ExecuteQuery(query, { req_id }) as RowDataPacket[];
+
+        if (rows && rows.length > 0) {
+            this.populateFromRow(rows[0]);
+            this._found = true;
+            return rows[0];
+        }
+
+        this._found = false;
+        return null;
     }
    
 }

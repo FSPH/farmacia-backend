@@ -31,7 +31,7 @@ export default class Controller_Locais {
             } 
 
             const locais = new Locais(db.connection);
-            const dados : iLocaisFields = await locais.BuscarPorId(local_id);
+            const dados = await locais.BuscarPorId(local_id) as unknown as iLocaisFields;
 
             if (!locais.found) {
                 const error = new Error('Local não encontrado');
