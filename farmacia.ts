@@ -15,12 +15,15 @@ import routes_pacientes from './routes/routes_pacientes.js';
 import routes_tipos_requisicoes from './routes/routes_tipos_requisicoes.js';
 import routes_inventarios from './routes/routes_inventarios.js';
 import authMiddleware from './middleware/auth.js';
+import { config } from 'dotenv';
 
 declare global {
   interface Error {
     statusCode?: number;
   }
 }
+
+config({path:'../.env'})
 
 const app = express();
 const port : number = Number(process.env.PORT || 3000);
