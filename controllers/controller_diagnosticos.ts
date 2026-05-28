@@ -2,7 +2,7 @@ import Database,{iDatabase} from "../connections/dbconn.js";
 import Diagnosticos,{iDiagnosticosFields} from "../model/dao_diagnostigos.js";
 import { Request, Response } from "express";
 import { iresdata } from "./interface_controllers.js";
-import { assignControllerError, safeDisconnect, safeRollback } from "./controller_helpers.js";
+import GravarLog from "../utils/gravarLogsError.js";
 
 export default class Controller_Diagnosticos{
 
@@ -21,7 +21,7 @@ export default class Controller_Diagnosticos{
 
             const pesq : string = String(req.params.pesq || '*');
 
-            await db.Connect();
+            void await db.Connect();
 
             if (!req.params.pesq && pesq !== '*') {
                 const error = new Error('Texto de pesquisa não informado');
@@ -34,10 +34,15 @@ export default class Controller_Diagnosticos{
             resdata.data = await diagnosticos.Listar(pesq) as iDiagnosticosFields[]; 
             
         } catch (error: any) {
-            assignControllerError(resdata, error, 'Controller Diagnosticos');
-        } finally {
-            await safeDisconnect(db);
+            
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Boname - Erro inesperado: ${error.stack}`);
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -64,7 +69,7 @@ export default class Controller_Diagnosticos{
                 throw error;
             }
 
-            await db.Connect();
+            void await db.Connect();
 
             const diagnosticos = new Diagnosticos(db.connection);
 
@@ -79,10 +84,16 @@ export default class Controller_Diagnosticos{
             resdata.data = dados; 
             
         } catch (error: any) {
-            assignControllerError(resdata, error, 'Controller Diagnosticos');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Diagnosticos - Erro inesperado: ${error.stack}`);
+
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -101,8 +112,9 @@ export default class Controller_Diagnosticos{
 
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const diag_id : number = Number(req.body.diag_id || 0);
             const diag_descr : string = String(req.body.diag_descr || '').toLocaleUpperCase();
@@ -128,24 +140,31 @@ export default class Controller_Diagnosticos{
 
             const diagnosticos = new Diagnosticos(db.connection);
 
-            await diagnosticos.BuscarPorId(diag_id);
+            void await diagnosticos.BuscarPorId(diag_id);
 
             diagnosticos.diag_id = diag_id;
             diagnosticos.diag_descr = diag_descr;
             diagnosticos.diag_ativo = diag_ativo;
 
-            await diagnosticos.Salvar();
+            void await diagnosticos.Salvar();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Diagnóstico salvo com sucesso";   
 
         } catch (error: any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Diagnosticos');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Diagnosticos - Erro inesperado: ${error.stack}`);
+
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -164,8 +183,9 @@ export default class Controller_Diagnosticos{
 
         try { 
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const diag_id : number = Number(req.params.diag_id || 0);   
 
@@ -177,7 +197,7 @@ export default class Controller_Diagnosticos{
 
             const diagnosticos = new Diagnosticos(db.connection);
 
-            await diagnosticos.BuscarPorId(diag_id);
+            void await diagnosticos.BuscarPorId(diag_id);
 
             if (!diagnosticos.found) {
                 const error = new Error('Diagnostico não encontrado');
@@ -187,16 +207,23 @@ export default class Controller_Diagnosticos{
 
             await diagnosticos.Excluir();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Diagnóstico excluído com sucesso";
 
         } catch (error: any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Diagnosticos');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Diagnosticos - Erro inesperado: ${error.stack}`);
+
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
     }

@@ -2,7 +2,7 @@ import Database, {iDatabase} from "../connections/dbconn.js";
 import TiposProdutos ,{iTiposMedicamentosFields}  from '../model/dao_tipos_medicamentos.js'
 import { Request, Response } from "express";
 import { iresdata } from "./interface_controllers.js";
-import { assignControllerError, safeDisconnect, safeRollback } from "./controller_helpers.js";
+import GravarLog from "../utils/gravarLogsError.js";
 
 export default class Controller_TiposProdutos {
 
@@ -21,7 +21,7 @@ export default class Controller_TiposProdutos {
 
             const pesq : string = String(req.params.pesq || '*');
 
-            await db.Connect();
+            void await db.Connect();
 
             if (!req.params.pesq && pesq !== '*') {
                 const error = new Error('Texto de pesquisa não informado');
@@ -34,10 +34,16 @@ export default class Controller_TiposProdutos {
             resdata.data = await tiposProdutos.Listar(pesq) as iTiposMedicamentosFields[]; 
             
         } catch (error :any) {
-            assignControllerError(resdata, error, 'Controller Tipos Produtos');
-        } finally {
-            await safeDisconnect(db);
+           
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -58,7 +64,7 @@ export default class Controller_TiposProdutos {
 
             const tipo_id : number = Number(req.params.tipo_id || 0);
 
-            await db.Connect();
+            void await db.Connect();
 
             if (tipo_id === 0) {
                 const error = new Error('ID do tipo de produto não informado');
@@ -68,7 +74,7 @@ export default class Controller_TiposProdutos {
 
             const tiposProdutos = new TiposProdutos(db.connection);
 
-            const dados = await tiposProdutos.BuscarPorId(tipo_id) as unknown as iTiposMedicamentosFields;
+            const dados: iTiposMedicamentosFields = await tiposProdutos.BuscarPorId(tipo_id);
 
             if (!tiposProdutos.found) { 
                 const error = new Error('Tipo de produto não encontrado');
@@ -79,10 +85,16 @@ export default class Controller_TiposProdutos {
             resdata.data = dados; 
             
         } catch (error: any) {
-            assignControllerError(resdata, error, 'Controller Tipos Produtos');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -101,7 +113,7 @@ export default class Controller_TiposProdutos {
 
         try {
 
-            await db.Connect();
+            void await db.Connect();
 
             const tipo_codigo : string = String(req.params.tipo_codigo || '').toLocaleUpperCase();
 
@@ -124,10 +136,16 @@ export default class Controller_TiposProdutos {
             resdata.data = dados;
             
         } catch (error :any ) {
-            assignControllerError(resdata, error, 'Controller Tipos Produtos');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -146,8 +164,9 @@ export default class Controller_TiposProdutos {
 
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const tipo_id : number = Number(req.body.tipo_id || 0);
             const tipo_codigo : string = String(req.body.tipo_codigo || '').toLocaleUpperCase().trim();
@@ -180,7 +199,7 @@ export default class Controller_TiposProdutos {
 
             const tipos = new TiposProdutos(db.connection);
 
-            await tipos.BuscarPorId(tipo_id);
+            void await tipos.BuscarPorId(tipo_id);
         
             tipos.tipo_id = tipo_id;
             tipos.tipo_codigo = tipo_codigo;
@@ -189,16 +208,23 @@ export default class Controller_TiposProdutos {
 
             await tipos.Salvar();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Tipo de produto salvo com sucesso";
 
         } catch (error :any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Tipos Produtos');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
      
@@ -217,8 +243,9 @@ export default class Controller_TiposProdutos {
 
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const tipo_id : number = Number(req.params.tipo_id || 0);
 
@@ -230,7 +257,7 @@ export default class Controller_TiposProdutos {
 
             const tipos = new TiposProdutos(db.connection);
 
-            await tipos.BuscarPorId(tipo_id);
+            void await tipos.BuscarPorId(tipo_id);
 
             if(!tipos.found) {
                 const error = new Error("Tipo de produto não encontrado");
@@ -238,18 +265,25 @@ export default class Controller_TiposProdutos {
                 throw error;
             }
 
-            await tipos.Excluir();
+            void await tipos.Excluir();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Tipo de produto excluído com sucesso";
             
         } catch (error : any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Tipos Produtos');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
         

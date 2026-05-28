@@ -66,7 +66,7 @@ export default class BaseModel implements iBaseModel{
             query = this.buildInsertQuery();
         }
 
-        await this._conn.query(query, fieldToSave);
+        void await this._conn.query(query, fieldToSave);
     }
 
     async Excluir(id?: number) {
@@ -74,7 +74,7 @@ export default class BaseModel implements iBaseModel{
         const deleteId = id || this._fields[this._primaryKey];
         const query: string = `DELETE FROM ${this._tb_name} WHERE ${this._primaryKey} = :id`;
 
-        await this._conn.query(query, { id: deleteId });
+        void await this._conn.query(query, { id: deleteId });
     }
 
     private async newId(): Promise<number> {
@@ -99,7 +99,7 @@ export default class BaseModel implements iBaseModel{
 
     private buildInsertQuery() {
         
-        const fields = Object.keys(this._fields).filter(f => this._fields[f] !== undefined);
+        const fields = Object.keys(this._fields).filter(f => this._fields[f] !== 0);
         const assignments = fields.map(f => `${f} = :${f}`).join(', ');
 
         return `INSERT INTO ${this._tb_name} SET ${assignments}`;

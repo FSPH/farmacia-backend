@@ -2,7 +2,7 @@ import Database, { iDatabase } from '../connections/dbconn.js';
 import Locais, {iLocaisFields}  from '../model/dao_locais.js';
 import { Request, Response } from 'express';
 import { iresdata } from './interface_controllers.js';
-import { assignControllerError, safeDisconnect, safeRollback } from './controller_helpers.js';
+import GravarLog from '../utils/gravarLogsError.js';
 
 export default class Controller_Locais {
 
@@ -19,7 +19,8 @@ export default class Controller_Locais {
         };
 
         try {
-            await db.Connect();
+
+            void await db.Connect();
 
             const local_id : number = Number(req.params.id_local || 0);
 
@@ -30,7 +31,7 @@ export default class Controller_Locais {
             } 
 
             const locais = new Locais(db.connection);
-            const dados = await locais.BuscarPorId(local_id) as unknown as iLocaisFields;
+            const dados : iLocaisFields = await locais.BuscarPorId(local_id);
 
             if (!locais.found) {
                 const error = new Error('Local não encontrado');
@@ -41,10 +42,15 @@ export default class Controller_Locais {
             resdata.data = dados;
 
         } catch (error :any) {
-            assignControllerError(resdata, error, 'Controller Locais');
-        } finally {
-            await safeDisconnect(db);
+            
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Locais - Erro inesperado: ${error.stack}`);        
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
     
@@ -63,7 +69,8 @@ export default class Controller_Locais {
         } as iresdata;
 
         try {
-            await db.Connect();
+
+            void await db.Connect();
 
             const pesq : string = String(req.params?.pesq || '*');
 
@@ -78,10 +85,16 @@ export default class Controller_Locais {
             resdata.data = await locais.Listar(pesq) as iLocaisFields[];
 
         } catch (error :any) {
-            assignControllerError(resdata, error, 'Controller Locais');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Locais - Erro inesperado: ${error.stack}`); 
+
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -99,14 +112,22 @@ export default class Controller_Locais {
         };
 
         try {
-            await db.Connect();
-            await db.Begin();
+
+            void await db.Connect();
+
+            void await db.Begin();
 
             const locais = new Locais(db.connection);
 
             const local_id: number = Number(req.body?.local_id || 0);
             const local_descr: string = String(req.body.local_descr || '').toLocaleUpperCase().trim();
             const local_ativo: 0 | 1 = req.body?.local_ativo || 0;
+
+            if (local_id === 0) {
+                const error = new Error('ID Local não informado');
+                error.statusCode = 400;
+                throw error;
+            }
 
             if (!local_descr) {
                 const error = new Error('Descrição do local não informada');
@@ -120,37 +141,36 @@ export default class Controller_Locais {
                 throw error;
             }
 
-            if (local_id) {
-                await locais.BuscarPorId(local_id);
+            void await locais.BuscarPorId(local_id);
 
-                if (!locais.found) {
-                    const error = new Error('Local não encontrado');    
-                    error.statusCode = 404;
-                    throw error;
-                }
+            if (!locais.found) {
+                const error = new Error('Local não encontrado');    
+                error.statusCode = 404;
+                throw error;
             }
 
-            if (local_id) {
-                locais.local_id = local_id;
-            }
             locais.local_descr = local_descr;
             locais.local_ativo = local_ativo;
 
             await locais.Salvar();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Local salvo com sucesso";
-            resdata.data = {
-                local_id: locais.local_id,
-            };
 
         } catch (error :any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Locais');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+            
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Locais - Erro inesperado: ${error.stack}`); 
+
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
     
@@ -168,8 +188,10 @@ export default class Controller_Locais {
         };
 
         try {
-            await db.Connect();
-            await db.Begin();
+
+            void await db.Connect();
+
+            void await db.Begin();
 
             const locais = new Locais(db.connection);
 
@@ -181,7 +203,7 @@ export default class Controller_Locais {
                 throw error;
             }
 
-            await locais.BuscarPorId(local_id);
+            void await locais.BuscarPorId(local_id);
 
             if (!locais.found) {
                 const error = new Error('Local não encontrado');
@@ -191,16 +213,23 @@ export default class Controller_Locais {
             
             await locais.Excluir();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Local excluído com sucesso";
 
         } catch (error :any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Locais');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Locais - Erro inesperado: ${error.stack}`); 
+            
         }
+        
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
     }

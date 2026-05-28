@@ -1,4 +1,5 @@
 import { Connection, RowDataPacket } from "mysql2/promise";
+import Database,{iDatabase} from "../connections/dbconn.js";
 import BaseModel,{iBaseModel} from "./BaseModel.js";
 
 export interface iGaucherFields {
@@ -7,7 +8,7 @@ export interface iGaucherFields {
     gau_medico_assis : string,
     gau_medico_crm : string,
     gau_med_id : number,    
-    gau_qtde_medicamento: number,
+    gua_qtde_medicamento: number,
     gau_ativo : 0 | 1,
 }
 
@@ -27,7 +28,7 @@ export default class Gaucher extends BaseModel implements iBaseModel,iGaucherFie
             gau_medico_assis: '',
             gau_medico_crm: '',
             gau_med_id: 0,
-            gau_qtde_medicamento: 0,
+            gua_qtde_medicamento: 0,
             gau_ativo: 0,
         }
         
@@ -53,8 +54,8 @@ export default class Gaucher extends BaseModel implements iBaseModel,iGaucherFie
     set gau_med_id(med_id: number) {this._fields.gau_med_id = med_id;}
     get gau_med_id() {return this._fields.gau_med_id;}
     
-    set gau_qtde_medicamento(qtde_medicamento: number) {this._fields.gau_qtde_medicamento = qtde_medicamento;}
-    get gau_qtde_medicamento() {return this._fields.gau_qtde_medicamento;}
+    set gua_qtde_medicamento(qtde_medicamento: number) {this._fields.gua_qtde_medicamento = qtde_medicamento;}
+    get gua_qtde_medicamento() {return this._fields.gua_qtde_medicamento;}
     
     set gau_ativo(ativo: 0 | 1) {this._fields.gau_ativo = ativo;}
     get gau_ativo() {return this._fields.gau_ativo;}
@@ -77,21 +78,6 @@ export default class Gaucher extends BaseModel implements iBaseModel,iGaucherFie
         
         const [rows] = await this.connection.query(query, { pac_id })  as RowDataPacket[];
         
-        if (rows && rows.length > 0) {
-            this.populateFromRow(rows[0]);
-            this._found = true;
-        } else {
-            this._found = false;
-        }
-
-        return this._fields;
-    }
-
-    async BuscarAtivoPorPaciente(pac_id: number) {
-        const query = `SELECT * FROM tb_pacientes_gaucher WHERE gau_pac_id = :pac_id AND gau_ativo = 1`;
-
-        const [rows] = await this.connection.query(query, { pac_id }) as RowDataPacket[];
-
         if (rows && rows.length > 0) {
             this.populateFromRow(rows[0]);
             this._found = true;

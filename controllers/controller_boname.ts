@@ -2,7 +2,7 @@ import Database, { iDatabase } from "../connections/dbconn.js";
 import Boname, {iBonameFields} from "../model/dao_boname.js";
 import { iresdata } from "./interface_controllers.js";
 import { Request, Response } from "express";
-import { assignControllerError, safeDisconnect, safeRollback } from "./controller_helpers.js";
+import GravarLog from "../utils/gravarLogsError.js";
 
 export default class Controller_Boname {
 
@@ -27,17 +27,23 @@ export default class Controller_Boname {
                 throw error;
             } 
 
-            await db.Connect();
+            void await db.Connect();
 
             const boname = new Boname(db.connection);
 
             resdata.data = await boname.ListarTodos(pesq) as iBonameFields[]; 
             
         } catch (error :any) {
-            assignControllerError(resdata, error, 'Controller Boname');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Boname - Erro inesperado: ${error.stack}`);
+
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -64,11 +70,11 @@ export default class Controller_Boname {
                 throw error;
             } 
 
-            await db.Connect();
+            void await db.Connect();
 
             const boname = new Boname(db.connection);
 
-            const dados = await boname.BuscarPorId(bona_id) as unknown as iBonameFields;
+            const dados :iBonameFields  = await boname.BuscarPorId(bona_id);
 
             if (!boname.found) { 
                 const error = new Error('Boname não encontrado');
@@ -79,10 +85,15 @@ export default class Controller_Boname {
             resdata.data = dados; 
             
         } catch (error :any) {
-            assignControllerError(resdata, error, 'Controller Boname');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Boname - Erro inesperado: ${error.stack}`);
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -101,8 +112,11 @@ export default class Controller_Boname {
 
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
+
+            console.log(req.body);
 
             const bona_id : number = Number(req.body.bona_id || 0);
             const bona_codigo : string = String(req.body.bona_codigo || '').toLocaleUpperCase();
@@ -149,7 +163,7 @@ export default class Controller_Boname {
 
             const boname = new Boname(db.connection);
 
-            await boname.BuscarPorId(bona_id);
+            void await boname.BuscarPorId(bona_id);
 
             boname.bona_id = bona_id;
             boname.bona_codigo = bona_codigo;
@@ -158,18 +172,26 @@ export default class Controller_Boname {
             boname.bona_diag_id = bona_diag_id;
             boname.bona_ativo = bona_ativo;
 
-            await boname.Salvar();
+            void await boname.Salvar();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Boname salvo com sucesso";   
             
         } catch (error :any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Boname');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+           
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Boname - Erro inesperado: ${error.stack}`);
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -188,8 +210,9 @@ export default class Controller_Boname {
 
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const bona_id : number = Number(req.params.bona_id || 0);
 
@@ -201,7 +224,7 @@ export default class Controller_Boname {
 
             const boname = new Boname(db.connection);
 
-            await boname.BuscarPorId(bona_id);
+            void await boname.BuscarPorId(bona_id);
 
             if (!boname.found) {
                 const error = new Error('Boname não encontrado');
@@ -211,16 +234,22 @@ export default class Controller_Boname {
 
             await boname.Excluir();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Boname excluído com sucesso";
 
         } catch (error :any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Boname');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+          
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Boname - Erro inesperado: ${error.stack}`);
         }
+        
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);   
     }

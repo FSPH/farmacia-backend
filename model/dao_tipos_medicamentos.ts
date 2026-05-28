@@ -24,7 +24,7 @@ export default class TiposMedicamentos extends BaseModel implements iBaseModel, 
             tipo_ativo: 0
         };
 
-        super(connection, 'tb_tipos_medicamentos', initFields, 'tipo_id');
+        super(connection, 'tb_tipos_produtos', initFields, 'tipo_id');
 
     }
 
@@ -44,7 +44,7 @@ export default class TiposMedicamentos extends BaseModel implements iBaseModel, 
 
     public async BuscarPorCodigo(tipo_codigo : string) : Promise<iTiposMedicamentosFields>{
 
-        const query : string = "SELECT * FROM tb_tipos_medicamentos WHERE tipo_codigo = :tipo_codigo";
+        const query : string = "SELECT * FROM tb_tipos_produtos WHERE tipo_codigo = :tipo_codigo";
 
         const [rows]: RowDataPacket[] = await this.ExecuteQuery(query, {tipo_codigo});
 
@@ -61,7 +61,7 @@ export default class TiposMedicamentos extends BaseModel implements iBaseModel, 
 
     public async Listar(pesq : string): Promise<iTiposMedicamentosFields[]> {
 
-        let query : string = "SELECT * FROM tb_tipos_medicamentos";
+        let query : string = "SELECT * FROM tb_tipos_produtos";
 
         if (pesq !== '*') {
             query += " WHERE tipo_descr LIKE :pesq";

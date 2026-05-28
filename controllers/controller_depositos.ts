@@ -2,7 +2,7 @@ import Database, { iDatabase } from "../connections/dbconn.js";
 import Depositos, { iDepositosFields } from "../model/dao_depositos.js";
 import { iresdata } from "./interface_controllers.js";
 import { Request, Response } from "express";
-import { assignControllerError, safeDisconnect, safeRollback } from "./controller_helpers.js";
+import GravarLog from "../utils/gravarLogsError.js";
 
 export default class Controller_Depositos {
 
@@ -21,7 +21,7 @@ export default class Controller_Depositos {
 
             const pesq : string = String(req.params.pesq || '*');
 
-            await db.Connect();
+            void await db.Connect();
 
             if (!req.params.pesq && pesq !== '*') {
                 const error = new Error('Texto de pesquisa não informado');
@@ -34,10 +34,16 @@ export default class Controller_Depositos {
             resdata.data = await depositos.Listar(pesq) as iDepositosFields[]; 
             
         } catch (error: any) {
-            assignControllerError(resdata, error, 'Controller Depositos');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -58,7 +64,7 @@ export default class Controller_Depositos {
 
             const dep_id : number = Number(req.params.dep_id || 0);
 
-            await db.Connect();
+            void await db.Connect();
 
             if (dep_id === 0) {
                 const error = new Error('ID do depósito não informado');
@@ -68,7 +74,7 @@ export default class Controller_Depositos {
 
             const depositos = new Depositos(db.connection);
 
-            const dados = await depositos.BuscarPorId(dep_id) as unknown as iDepositosFields;
+            const dados : iDepositosFields = await depositos.BuscarPorId(dep_id);
 
             if (!depositos.found) { 
                 const error = new Error('Depósito não encontrado');
@@ -79,10 +85,15 @@ export default class Controller_Depositos {
             resdata.data = dados; 
             
         } catch (error: any) {
-            assignControllerError(resdata, error, 'Controller Depositos');
-        } finally {
-            await safeDisconnect(db);
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -101,8 +112,9 @@ export default class Controller_Depositos {
 
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const depo_id : number = Number(req.body.depo_id || 0);
             const depo_descr : string = String(req.body.depo_descr || '').toLocaleUpperCase();
@@ -128,24 +140,31 @@ export default class Controller_Depositos {
 
             const depositos = new Depositos(db.connection);
 
-            await depositos.BuscarPorId(depo_id);
+            void await depositos.BuscarPorId(depo_id);
 
             depositos.dep_id = depo_id;
             depositos.dep_descr = depo_descr;
             depositos.dep_ativo = depo_ativo;
 
-            await depositos.Salvar();
+            void await depositos.Salvar();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Depósito salvo com sucesso";   
             
         } catch (error: any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Depositos');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);
+            
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
 
@@ -164,8 +183,9 @@ export default class Controller_Depositos {
 
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const dep_id : number = Number(req.params.dep_id || 0);
 
@@ -177,7 +197,7 @@ export default class Controller_Depositos {
 
             const depositos = new Depositos(db.connection);
 
-            await depositos.BuscarPorId(dep_id);
+            void await depositos.BuscarPorId(dep_id);
 
             if (!depositos.found) {
                 const error = new Error('Depositoo não encontrado');
@@ -187,16 +207,23 @@ export default class Controller_Depositos {
             
             await depositos.Excluir();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = "Depósito excluído com sucesso";
 
         } catch (error: any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Depositos');
-        } finally {
-            await safeDisconnect(db);
+
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);
+
         }
+
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
   

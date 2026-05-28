@@ -2,7 +2,7 @@ import Database, {iDatabase} from "../connections/dbconn.js";
 import Medicamentos, {iMedicamentosFields} from "../model/dao_medicamentos.js";
 import { iresdata } from "./interface_controllers.js";
 import { Request, Response } from "express";
-import { assignControllerError, safeDisconnect, safeRollback } from "./controller_helpers.js";
+import GravarLog from "../utils/gravarLogsError.js";
 
 export default class Controller_Medicamentos {
 
@@ -19,9 +19,11 @@ export default class Controller_Medicamentos {
         
         try {
 
-            await db.Connect();
+            void await db.Connect();
 
             const pesq: string = String(req.params.pesq || '*');
+
+            console.log('pesq', pesq);
 
             if (!pesq) {
                 const error = new Error('Texto de pesquisa não informado');
@@ -34,10 +36,16 @@ export default class Controller_Medicamentos {
             resdata.data = await medicamentos.ListarTodos(pesq) as iMedicamentosFields[];
             
         } catch (error:any) {
-            assignControllerError(resdata, error, 'Controller Medicamentos');
-        } finally {
-            await safeDisconnect(db);
+            
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+
         }
+        
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
         
@@ -50,13 +58,13 @@ export default class Controller_Medicamentos {
         const resdata: iresdata = {
           err: 0,
           msg: '',
-          status: 200,
+          status: 0,
           data: null
         };
         
         try {
 
-            await db.Connect();
+            void await db.Connect();
 
             const pesq: string = String(req.params.pesq || '*');
 
@@ -71,10 +79,16 @@ export default class Controller_Medicamentos {
             resdata.data = await medicamentos.ListarAtivos(pesq) as iMedicamentosFields[];
             
         } catch (error:any) {
-            assignControllerError(resdata, error, 'Controller Medicamentos');
-        } finally {
-            await safeDisconnect(db);
+            
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+
         }
+        
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
         
@@ -93,7 +107,7 @@ export default class Controller_Medicamentos {
         
         try {
 
-            await db.Connect();
+            void await db.Connect();
 
             const med_id: number = Number(req.params.med_id);
 
@@ -116,10 +130,16 @@ export default class Controller_Medicamentos {
             resdata.data = data;
             
         } catch (error:any) {
-            assignControllerError(resdata, error, 'Controller Medicamentos');
-        } finally {
-            await safeDisconnect(db);
+            
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+
         }
+        
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
         
@@ -138,8 +158,9 @@ export default class Controller_Medicamentos {
         
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const med_id: number = Number(req.body.med_id);
             const med_descr = String(req.body.med_descr).trim().toLocaleUpperCase();
@@ -177,18 +198,25 @@ export default class Controller_Medicamentos {
             medicamentos.med_diag_id = med_diag_id;
             medicamentos.med_ativo = med_ativo;
 
-            await medicamentos.Salvar();
+            void await medicamentos.Salvar();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = 'Medicamento salvo com sucesso';
             
         } catch (error:any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Medicamentos');
-        } finally {
-            await safeDisconnect(db);
+            
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+
         }
+        
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
         
@@ -207,8 +235,9 @@ export default class Controller_Medicamentos {
         
         try {
 
-            await db.Connect();
-            await db.Begin();
+            void await db.Connect();
+
+            void await db.Begin();
 
             const med_id: number = Number(req.params.med_id);
 
@@ -220,7 +249,7 @@ export default class Controller_Medicamentos {
 
             const medicamentos = new Medicamentos(db.connection);
 
-            await medicamentos.BuscarPorId(med_id);
+            void await medicamentos.BuscarPorId(med_id);
 
             if (!medicamentos.found) {
                 const error = new Error('Medicamento não encontrado');
@@ -228,21 +257,29 @@ export default class Controller_Medicamentos {
                 throw error;
             }
             
-            await medicamentos.Excluir();
+            void await medicamentos.Excluir();
 
-            await db.Commit();
+            void await db.Commit();
 
             resdata.msg = 'Medicamento excluído com sucesso';
             
         } catch (error:any) {
-            await safeRollback(db);
-            assignControllerError(resdata, error, 'Controller Medicamentos');
-        } finally {
-            await safeDisconnect(db);
+            
+            void await db.Rollback();
+
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+
         }
+        
+        void await db.Disconnect();
 
         res.status(resdata.status).json(resdata);
         
     }
 
 }
+

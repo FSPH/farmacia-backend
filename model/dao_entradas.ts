@@ -48,7 +48,7 @@ export default class Entradas extends BaseModel implements iEntradas,iBaseModel 
     get ent_lote(): string {return this._fields.ent_lote}
 
     set ent_qtde(ent_qtde: number) {this._fields.ent_qtde = ent_qtde}
-    get ent_qtde(): number {return this._fields.ent_qtde}
+    get ent_qtde(): number {return this.ent_qtde}
 
     set ent_doc(ent_doc: string) {this._fields.ent_doc = ent_doc}
     get ent_doc(): string {return this._fields.ent_doc}
