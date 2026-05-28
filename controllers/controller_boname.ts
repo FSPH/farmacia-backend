@@ -74,7 +74,7 @@ export default class Controller_Boname {
 
             const boname = new Boname(db.connection);
 
-            const dados :iBonameFields  = await boname.BuscarPorId(bona_id);
+            const dados  = await boname.BuscarPorId(bona_id);
 
             if (!boname.found) { 
                 const error = new Error('Boname não encontrado');
