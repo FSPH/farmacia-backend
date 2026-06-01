@@ -74,7 +74,7 @@ export default class Controller_TiposProdutos {
 
             const tiposProdutos = new TiposProdutos(db.connection);
 
-            const dados: iTiposMedicamentosFields = await tiposProdutos.BuscarPorId(tipo_id);
+            const dados = await tiposProdutos.BuscarPorId(tipo_id) as iTiposMedicamentosFields;
 
             if (!tiposProdutos.found) { 
                 const error = new Error('Tipo de produto não encontrado');

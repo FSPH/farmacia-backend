@@ -74,7 +74,7 @@ export default class Controller_Depositos {
 
             const depositos = new Depositos(db.connection);
 
-            const dados : iDepositosFields = await depositos.BuscarPorId(dep_id);
+            const dados = await depositos.BuscarPorId(dep_id) as iDepositosFields;
 
             if (!depositos.found) { 
                 const error = new Error('Depósito não encontrado');
