@@ -41,7 +41,7 @@ export default class Database implements iDatabase {
 
     get connection(): Connection {
         if (!this.conn) {
-            throw new Error('Conexão com banco de dados não inicializada.');
+            throw new Error('Conexão com banco de dados não inicializada!');
         }
 
         return this.conn;
