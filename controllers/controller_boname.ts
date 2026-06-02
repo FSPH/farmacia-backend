@@ -169,12 +169,6 @@ export default class Controller_Boname {
             const bona_diag_id : number = Number(req.body.bona_diag_id || 0);
             const bona_ativo : 0 | 1 = req.body.bona_ativo || 0;
 
-            if (bona_id === 0) {
-                const error = new Error('ID Boname não informado');
-                error.statusCode = 400;
-                throw error;
-            }
-
             if (!bona_codigo) {
                 const error = new Error('Código do Boname não informado');
                 error.statusCode = 400;
