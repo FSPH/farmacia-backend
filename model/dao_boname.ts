@@ -61,5 +61,18 @@ export default class Boname extends BaseModel implements iBonameFields, iBaseMod
         
         return rows as iBonameFields[];
     }
+
+    async ListarAtivos(pesq : string): Promise<iBonameFields[]> {
+        
+        let query : string = `SELECT * FROM tb_boname WHERE bona_ativo = 1`;
+
+        if (pesq !== '*') {
+            query += " AND bona_descr LIKE :pesq";
+        }
+
+        const [rows] = await this.ExecuteQuery(query, {pesq: `%${pesq}%`}) as RowDataPacket[];
+        
+        return rows as iBonameFields[];
+    }
    
 }

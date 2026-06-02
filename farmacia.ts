@@ -10,6 +10,8 @@ import routes_medicamentos from './routes/routes_medicamentos.js';
 import routes_requisicoes from './routes/routes_requisicoes.js';
 import {globalErrorHandler} from './utils/ErrorMiddleware.js';
 import routes_entradas from './routes/routes_entradas.js';
+import morgan from 'morgan';
+import helmet from 'helmet';
 
 //import routes_tipos_requisicoes from './routes/routes_tipos_requisicoes.js';
 
@@ -28,6 +30,9 @@ const app = express();
 const port : number = Number(process.env.PORT || 3000);
 
 console.clear();
+
+app.use(helmet());
+app.use(morgan('dev'));
 
 app.use(express.json({
     limit: '5mb',
