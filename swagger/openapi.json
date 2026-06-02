@@ -1,0 +1,82 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Crediario API",
+    "version": "1.0.0",
+    "description": "Especificacao gerada automaticamente a partir das rotas Express do projeto."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Ambiente local"
+    }
+  ],
+  "paths": {},
+  "components": {
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "err": {
+            "type": "integer",
+            "example": 0
+          },
+          "msg": {
+            "type": "string",
+            "example": "OK"
+          },
+          "status": {
+            "type": "integer",
+            "example": 200
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "err": {
+            "type": "integer",
+            "example": 400
+          },
+          "msg": {
+            "type": "string",
+            "example": "Requisicao invalida."
+          },
+          "status": {
+            "type": "integer",
+            "example": 400
+          },
+          "data": {
+            "type": "array",
+            "items": {},
+            "example": []
+          }
+        },
+        "required": [
+          "err",
+          "msg",
+          "status",
+          "data"
+        ]
+      }
+    }
+  }
+}

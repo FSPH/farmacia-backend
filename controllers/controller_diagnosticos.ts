@@ -48,6 +48,49 @@ export default class Controller_Diagnosticos{
 
     }
 
+    static async ListarAtivos(req: Request, res: Response) {
+
+        const db : iDatabase = new Database();
+
+        const resdata : iresdata = {
+            err: 0,
+            msg: '',
+            status: 200,
+            data: {}
+        }
+
+        try {
+
+            const pesq : string = String(req.params.pesq || '*');
+
+            void await db.Connect();
+
+            if (!req.params.pesq && pesq !== '*') {
+                const error = new Error('Texto de pesquisa não informado');
+                error.statusCode = 400;
+                throw error;
+            } 
+
+            const diagnosticos = new Diagnosticos(db.connection);
+
+            resdata.data = await diagnosticos.ListarAtivos(pesq) as iDiagnosticosFields[]; 
+            
+        } catch (error: any) {
+            
+            resdata.err = error.statusCode || 500;
+            resdata.status = error.statusCode || 500;
+            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
+
+            if (resdata.status === 500) GravarLog(`Controller Boname - Erro inesperado: ${error.stack}`);
+        }
+
+        void await db.Disconnect();
+
+        res.status(resdata.status).json(resdata);
+
+    }
+
+
     static async Buscar(req: Request, res: Response) {
 
         const db : iDatabase = new Database();

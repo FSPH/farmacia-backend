@@ -47,4 +47,18 @@ export default class Diagnosticos extends BaseModel implements iDiagnosticosFiel
 
     }
 
+    public async ListarAtivos(pesq : string) : Promise<iDiagnosticosFields[]>{
+
+        let query : string = "SELECT * FROM tb_diagnosticos WHERE diag_ativo = 1";
+
+        if (pesq !== '*') {
+            query += " AND diag_descr LIKE :pesq";
+        }
+
+        const [rows]  = await this.ExecuteQuery(query, {pesq: `%${pesq}%`}) as RowDataPacket[];
+
+        return rows as iDiagnosticosFields[];
+
+    }
+
 }
