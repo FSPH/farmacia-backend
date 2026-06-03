@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "express-rest-api": {
+      "source": "pluginagentmarketplace/custom-plugin-nodejs",
+      "sourceType": "github",
+      "skillPath": "skills/express-rest-api/SKILL.md",
+      "computedHash": "3dbdcd641db7b87a2650016f872ac64643b80efab945af2f1ee151699965f84e"
+    }
+  }
+}
