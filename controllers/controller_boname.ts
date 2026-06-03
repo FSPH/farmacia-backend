@@ -160,8 +160,6 @@ export default class Controller_Boname {
 
             void await db.Begin();
 
-            console.log(req.body);
-
             const bona_id : number = Number(req.body.bona_id || 0);
             const bona_codigo : string = String(req.body.bona_codigo || '').toLocaleUpperCase();
             const bona_descr : string = String(req.body.bona_descr || '').toLocaleUpperCase();
@@ -201,6 +199,14 @@ export default class Controller_Boname {
 
             const boname = new Boname(db.connection);
 
+            void await boname.BuscarPorCodigo(bona_codigo);
+
+            if (!boname.found && bona_id === 0) {
+                const error = new Error('Boname com este código já existe');
+                error.statusCode = 400;
+                throw error;
+            }
+
             void await boname.BuscarPorId(bona_id);
 
             boname.bona_id = bona_id;
@@ -220,7 +226,6 @@ export default class Controller_Boname {
 
             void await db.Rollback();
 
-           
             resdata.err = error.statusCode || 500;
             resdata.status = error.statusCode || 500;
             resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;

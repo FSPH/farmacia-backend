@@ -74,5 +74,17 @@ export default class Boname extends BaseModel implements iBonameFields, iBaseMod
         
         return rows as iBonameFields[];
     }
+
+    async BuscarPorCodigo(codigo: string): Promise<void> {
+        
+        const query = `SELECT * FROM tb_boname WHERE bona_codigo = :codigo LIMIT 1`;
+        const [rows] = await this.ExecuteQuery(query, {codigo}) as RowDataPacket[];
+
+        if (rows.length > 0) {
+            this.populateFromRow(rows[0]);
+        } else {
+            this._found = false;
+        }
+    }
    
 }
