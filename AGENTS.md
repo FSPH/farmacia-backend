@@ -25,7 +25,8 @@ Ana Carolina
 
 Objetivo:
 Implementar:
-- APIs REST
+- Aplicar a skill express-rest-api da pasta farmacia/backend/.agents/skills
+- APIs REST 
 - regras de estoque
 - inventários
 - requisições
