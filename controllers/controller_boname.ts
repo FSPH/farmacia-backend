@@ -201,7 +201,7 @@ export default class Controller_Boname {
 
             void await boname.BuscarPorCodigo(bona_codigo);
 
-            if (!boname.found && bona_id === 0) {
+            if (boname.found && bona_id === 0) {
                 const error = new Error('Boname com este código já existe');
                 error.statusCode = 400;
                 throw error;
