@@ -19,7 +19,8 @@
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.4.0",
     "morgan": "^1.10.1",
-    "mysql2": "^3.22.2"
+    "mysql2": "^3.22.2",
+    "swagger": "^0.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -1,9 +1,10 @@
 import Database, {iDatabase} from "../connections/dbconn.js";
 import { Request, Response } from "express";
-import GravarLog from "../utils/gravarLogsError.js";
+import { applyControllerError } from "../utils/controllerError.js";
 import { iresdata } from "./interface_controllers.js";
 import Estoque from "../model/dao_estoque.js";
 
+// Expoe consultas e ajustes de estoque controlados por deposito, medicamento e lote.
 export default class Controller_Estoque {
 
     static async Listar(req: Request, res: Response) {
@@ -39,11 +40,7 @@ export default class Controller_Estoque {
             
         } catch (error :any) {
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Estoque');
 
         } finally {
 
@@ -94,11 +91,7 @@ export default class Controller_Estoque {
             
         } catch (error :any) {
             
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Estoque');
         }
         
         return res.status(resdata.status).json(resdata);
@@ -179,11 +172,7 @@ export default class Controller_Estoque {
 
             void await db.Rollback();
             
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Estoque - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Estoque');
         }
         
         return res.status(resdata.status).json(resdata);

@@ -2,8 +2,9 @@ import Database, {iDatabase} from "../connections/dbconn.js";
 import Medicamentos, {iMedicamentosFields} from "../model/dao_medicamentos.js";
 import { iresdata } from "./interface_controllers.js";
 import { Request, Response } from "express";
-import GravarLog from "../utils/gravarLogsError.js";
+import { applyControllerError } from "../utils/controllerError.js";
 
+// Controla o cadastro mestre de medicamentos.
 export default class Controller_Medicamentos {
 
     static async Listar (req: Request, res: Response) {
@@ -37,11 +38,7 @@ export default class Controller_Medicamentos {
             
         } catch (error:any) {
             
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Medicamentos');
 
         }
         
@@ -80,11 +77,7 @@ export default class Controller_Medicamentos {
             
         } catch (error:any) {
             
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Medicamentos');
 
         }
         
@@ -131,11 +124,7 @@ export default class Controller_Medicamentos {
             
         } catch (error:any) {
             
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Medicamentos');
 
         }
         
@@ -208,11 +197,7 @@ export default class Controller_Medicamentos {
             
             void await db.Rollback();
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Medicamentos');
 
         }
         
@@ -267,11 +252,7 @@ export default class Controller_Medicamentos {
             
             void await db.Rollback();
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Medicamentos - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Medicamentos');
 
         }
         
@@ -282,4 +263,3 @@ export default class Controller_Medicamentos {
     }
 
 }
-

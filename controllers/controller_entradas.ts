@@ -3,14 +3,15 @@ import Entradas, { iEntradas } from "../model/dao_entradas.js";
 import Medicamentos from "../model/dao_medicamentos.js";
 import { iresdata } from "./interface_controllers.js";
 import { Request, Response } from "express";
-import GravarLog from "../utils/gravarLogsError.js";
+import { applyControllerError } from "../utils/controllerError.js";
 
+// Coordena o fluxo de entradas e os reflexos no estoque.
 export default class Controller_Entradas {
 
     static async ListarTodos(req: Request, res: Response) {
         
+        // Inicializa infraestrutura da requisicao e o envelope padrao da resposta.
         const db = new Database();
-
         const resdata: iresdata = {
           err: 0,
           msg: '',
@@ -20,8 +21,8 @@ export default class Controller_Entradas {
 
         try {
             
+            // Valida filtros, consulta o DAO e devolve a lista encontrada.
             await db.Connect();
-            
             const pesq = String(req.params.pesq || '*');
             const data_inicio = new Date(String(req.params.data_inicio));
             const data_fim = new Date(String(req.params.data_fim));
@@ -51,13 +52,7 @@ export default class Controller_Entradas {
             resdata.data = result;
             
         } catch (error: any) {
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-            
-            if (resdata.status === 500) GravarLog(`Controller Entradas - Erro inesperado: ${error.stack}`);
-            
+            applyControllerError(resdata, error, 'Controller Entradas');
         }
 
         await db.Disconnect();
@@ -108,13 +103,7 @@ export default class Controller_Entradas {
             resdata.data = result;
             
         } catch (error: any) {
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-            
-            if (resdata.status === 500) GravarLog(`Controller Entradas - Erro inesperado: ${error.stack}`);
-            
+            applyControllerError(resdata, error, 'Controller Entradas');
         }
 
         await db.Disconnect();
@@ -206,15 +195,8 @@ export default class Controller_Entradas {
             resdata.msg = 'Entrada salva com sucesso';
             
         } catch (error: any) {
-            
             await db.connection.rollback();
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-            
-            if (resdata.status === 500) GravarLog(`Controller Entradas - Erro inesperado: ${error.stack}`);
-            
+            applyControllerError(resdata, error, 'Controller Entradas');
         }
 
         await db.Disconnect();

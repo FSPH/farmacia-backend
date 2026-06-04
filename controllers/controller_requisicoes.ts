@@ -1,11 +1,12 @@
 import Database, {iDatabase} from "../connections/dbconn.js";
 import { Request, Response } from "express";
-import GravarLog from "../utils/gravarLogsError.js";
+import { applyControllerError } from "../utils/controllerError.js";
 import { iresdata } from "./interface_controllers.js";
 import Requisicoes from "../model/dao_requisicoes.js";
 import Gaucher from "../model/dao_gaucher.js";
 import Estoque from "../model/dao_estoque.js";
 
+// Coordena requisicoes e o fluxo de aprovacao com impacto em estoque.
 export default class Controller_Requisicoes {
 
     static async Listar(req: Request, res: Response) {
@@ -41,11 +42,7 @@ export default class Controller_Requisicoes {
             
         } catch (error :any) {
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Requisicoes');
 
         }
 
@@ -92,11 +89,7 @@ export default class Controller_Requisicoes {
             
         } catch (error :any) {
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Requisicoes');
 
         }
 
@@ -223,11 +216,7 @@ export default class Controller_Requisicoes {
 
             void await db.Rollback();
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Requisicoes');
 
         }
 
@@ -322,11 +311,7 @@ export default class Controller_Requisicoes {
 
             void await db.Rollback();
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Requisicoes - Erro inesperado: ${error.stack}`);
+            applyControllerError(resdata, error, 'Controller Requisicoes');
 
         }
 

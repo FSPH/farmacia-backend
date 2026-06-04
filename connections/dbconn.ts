@@ -10,6 +10,7 @@ export interface iDatabase {
     Rollback() : Promise<void>,
 }
 
+// Encapsula a conexao MySQL e o controle de transacao usado pelos controllers.
 export default class Database implements iDatabase {
 
     private conn: Connection | null = null;
@@ -20,6 +21,7 @@ export default class Database implements iDatabase {
         this.dbname = dbname;
     }
 
+    // Abre a conexao somente quando ela ainda nao existe no ciclo atual.
     public async Connect() : Promise<void> {
         if (this.conn) {
             return;
@@ -39,6 +41,7 @@ export default class Database implements iDatabase {
        
     }
 
+    // Exige que a conexao tenha sido inicializada antes de expor o driver.
     get connection(): Connection {
         if (!this.conn) {
             throw new Error('Conexão com banco de dados não inicializada!');
@@ -47,6 +50,7 @@ export default class Database implements iDatabase {
         return this.conn;
     }
 
+    // Fecha a conexao e reseta o estado da transacao local.
     public async Disconnect(): Promise<void> {
         if (!this.conn) {
             return;
@@ -57,6 +61,7 @@ export default class Database implements iDatabase {
         this.transactionActive = false;
     }
 
+    // Inicia transacao apenas uma vez por ciclo de requisicao.
     public async Begin(): Promise<void> {
         if (!this.conn || this.transactionActive) {
             return;
@@ -66,6 +71,7 @@ export default class Database implements iDatabase {
         this.transactionActive = true;
     }
 
+    // Confirma alteracoes somente quando ha transacao ativa.
     public async Commit(): Promise<void> {
         if (!this.conn || !this.transactionActive) {
             return;
@@ -75,6 +81,7 @@ export default class Database implements iDatabase {
         this.transactionActive = false;
     }
 
+    // Reverte alteracoes pendentes quando alguma etapa falha.
     public async Rollback(): Promise<void> {
         if (!this.conn || !this.transactionActive) {
             return;

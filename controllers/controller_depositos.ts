@@ -2,14 +2,15 @@ import Database, { iDatabase } from "../connections/dbconn.js";
 import Depositos, { iDepositosFields } from "../model/dao_depositos.js";
 import { iresdata } from "./interface_controllers.js";
 import { Request, Response } from "express";
-import GravarLog from "../utils/gravarLogsError.js";
+import { applyControllerError } from "../utils/controllerError.js";
 
+// Controla o CRUD de depositos com validacao e persistencia transacional.
 export default class Controller_Depositos {
 
     static async Listar(req: Request, res: Response) {
 
+        // Inicializa infraestrutura da requisicao e o envelope padrao da resposta.
         const db : iDatabase = new Database();
-
         const resdata : iresdata = {
             err: 0,
             msg: '',
@@ -19,6 +20,7 @@ export default class Controller_Depositos {
 
         try {
 
+            // Valida o filtro antes da consulta.
             const pesq : string = String(req.params.pesq || '*');
 
             void await db.Connect();
@@ -29,18 +31,12 @@ export default class Controller_Depositos {
                 throw error;
             } 
 
+            // Executa a consulta no DAO e devolve a lista filtrada.
             const depositos = new Depositos(db.connection);
-
             resdata.data = await depositos.Listar(pesq) as iDepositosFields[]; 
             
         } catch (error: any) {
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);
-            
+            applyControllerError(resdata, error, 'Controller Depositos');
         }
 
         void await db.Disconnect();
@@ -51,8 +47,8 @@ export default class Controller_Depositos {
 
     static async Buscar(req: Request, res: Response) {
 
+        // Inicializa infraestrutura da requisicao e o envelope padrao da resposta.
         const db : iDatabase = new Database();
-
         const resdata : iresdata = {
             err: 0,
             msg: '',
@@ -62,6 +58,7 @@ export default class Controller_Depositos {
 
         try {
 
+            // Valida o identificador antes da busca.
             const dep_id : number = Number(req.params.dep_id || 0);
 
             void await db.Connect();
@@ -72,8 +69,8 @@ export default class Controller_Depositos {
                 throw error;
             }
 
+            // Carrega o registro e garante retorno 404 quando ele nao existir.
             const depositos = new Depositos(db.connection);
-
             const dados = await depositos.BuscarPorId(dep_id) as iDepositosFields;
 
             if (!depositos.found) { 
@@ -85,12 +82,7 @@ export default class Controller_Depositos {
             resdata.data = dados; 
             
         } catch (error: any) {
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);            
+            applyControllerError(resdata, error, 'Controller Depositos');
         }
 
         void await db.Disconnect();
@@ -101,8 +93,8 @@ export default class Controller_Depositos {
 
     static async Salvar(req: Request, res: Response) {
 
+        // Inicializa infraestrutura da requisicao e o envelope padrao da resposta.
         const db : iDatabase = new Database();
-
         const resdata : iresdata = {
             err: 0,
             msg: '',
@@ -112,10 +104,11 @@ export default class Controller_Depositos {
 
         try {
 
+            // Abre a conexao e inicia a transacao do salvamento.
             void await db.Connect();
-
             void await db.Begin();
 
+            // Normaliza os campos vindos da requisicao.
             const depo_id : number = Number(req.body.depo_id || 0);
             const depo_descr : string = String(req.body.depo_descr || '').toLocaleUpperCase();
             const depo_ativo : 0 | 1 = req.body.depo_ativo || 0;
@@ -138,8 +131,8 @@ export default class Controller_Depositos {
                 throw error;
             }
 
+            // Carrega o registro atual, aplica os valores e persiste a alteracao.
             const depositos = new Depositos(db.connection);
-
             void await depositos.BuscarPorId(depo_id);
 
             depositos.dep_id = depo_id;
@@ -153,15 +146,8 @@ export default class Controller_Depositos {
             resdata.msg = "Depósito salvo com sucesso";   
             
         } catch (error: any) {
-
             void await db.Rollback();
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);
-            
+            applyControllerError(resdata, error, 'Controller Depositos');
         }
 
         void await db.Disconnect();
@@ -172,8 +158,8 @@ export default class Controller_Depositos {
     
     static async Excluir(req: Request, res: Response) {
 
+        // Inicializa infraestrutura da requisicao e o envelope padrao da resposta.
         const db : iDatabase = new Database();
-
         const resdata : iresdata = {
             err: 0,
             msg: '',
@@ -183,10 +169,11 @@ export default class Controller_Depositos {
 
         try {
 
+            // Abre a conexao e inicia a transacao da exclusao.
             void await db.Connect();
-
             void await db.Begin();
 
+            // Valida o identificador e garante que o deposito exista.
             const dep_id : number = Number(req.params.dep_id || 0);
 
             if (dep_id === 0) {
@@ -212,15 +199,8 @@ export default class Controller_Depositos {
             resdata.msg = "Depósito excluído com sucesso";
 
         } catch (error: any) {
-
             void await db.Rollback();
-
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Depositos - Erro inesperado: ${error.stack}`);
-
+            applyControllerError(resdata, error, 'Controller Depositos');
         }
 
         void await db.Disconnect();

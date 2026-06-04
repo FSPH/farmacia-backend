@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import type { AuthUser } from '../types/auth.js';
+import { logUnexpectedError } from '../utils/controllerError.js';
 
+// Interpreta flags booleanas do ambiente sem depender de capitalizacao.
 function isEnabled(value?: string): boolean {
     return ['1', 'true', 'yes', 'on'].includes(String(value || '').toLowerCase());
 }
 
+// Extrai o token Bearer do cabecalho Authorization.
 function parseBearerToken(header?: string): string | null {
     if (!header) {
         return null;
@@ -20,6 +23,7 @@ function parseBearerToken(header?: string): string | null {
     return token.trim();
 }
 
+// Carrega a chave de verificacao na ordem de prioridade definida pelo ambiente.
 function loadVerificationKey(): string | null {
     const publicKey = process.env.AUTH_JWT_PUBLIC_KEY?.trim();
     const publicKeyBase64 = process.env.AUTH_JWT_PUBLIC_KEY_BASE64?.trim();
@@ -36,6 +40,7 @@ function loadVerificationKey(): string | null {
     return secret || null;
 }
 
+// Normaliza os papeis do payload para um array simples de strings.
 function normalizeRoles(payload: JwtPayload | Record<string, any>): string[] {
     const rawRoles = payload.roles || payload.role || payload.authorities || payload.groups || [];
 
@@ -53,6 +58,7 @@ function normalizeRoles(payload: JwtPayload | Record<string, any>): string[] {
     return [];
 }
 
+// Constrói o usuario autenticado que sera anexado ao request.
 function buildAuthUser(payload: JwtPayload | Record<string, any>, tokenVerified: boolean): AuthUser {
     const name = String(
         payload.name ||
@@ -72,6 +78,7 @@ function buildAuthUser(payload: JwtPayload | Record<string, any>, tokenVerified:
     };
 }
 
+// Valida tokens externos e anexa as claims do usuario autenticado na requisicao.
 export default function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const authRequired = isEnabled(process.env.AUTH_REQUIRED);
     const allowUnverifiedTokens = isEnabled(process.env.AUTH_ALLOW_UNVERIFIED_TOKENS);
@@ -109,10 +116,16 @@ export default function authMiddleware(req: Request, res: Response, next: NextFu
         }
 
         if (!allowUnverifiedTokens) {
+            const message = 'Autenticação habilitada, mas sem chave pública/segredo configurado para validar o token externo.';
+
+            if (authRequired) {
+                logUnexpectedError('AuthMiddleware', new Error(message));
+            }
+
             return res.status(authRequired ? 500 : 401).json({
                 err: authRequired ? 500 : 401,
                 msg: authRequired
-                    ? 'Autenticação habilitada, mas sem chave pública/segredo configurado para validar o token externo.'
+                    ? message
                     : 'Token inválido.',
                 status: authRequired ? 500 : 401,
                 data: null,

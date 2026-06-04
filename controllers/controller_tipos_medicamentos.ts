@@ -2,8 +2,9 @@ import Database, {iDatabase} from "../connections/dbconn.js";
 import TiposProdutos ,{iTiposMedicamentosFields}  from '../model/dao_tipos_medicamentos.js'
 import { Request, Response } from "express";
 import { iresdata } from "./interface_controllers.js";
-import GravarLog from "../utils/gravarLogsError.js";
+import { applyControllerError } from "../utils/controllerError.js";
 
+// Controla o cadastro de tipos de medicamentos da aplicacao.
 export default class Controller_TiposProdutos {
 
     static async Listar(req: Request, res: Response) {
@@ -35,11 +36,7 @@ export default class Controller_TiposProdutos {
             
         } catch (error :any) {
            
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            applyControllerError(resdata, error, 'Controller Tipos Produtos'); 
             
         }
 
@@ -86,11 +83,7 @@ export default class Controller_TiposProdutos {
             
         } catch (error: any) {
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            applyControllerError(resdata, error, 'Controller Tipos Produtos'); 
             
         }
 
@@ -137,11 +130,7 @@ export default class Controller_TiposProdutos {
             
         } catch (error :any ) {
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            applyControllerError(resdata, error, 'Controller Tipos Produtos'); 
             
         }
 
@@ -216,11 +205,7 @@ export default class Controller_TiposProdutos {
 
             void await db.Rollback();
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            applyControllerError(resdata, error, 'Controller Tipos Produtos'); 
             
         }
 
@@ -275,11 +260,7 @@ export default class Controller_TiposProdutos {
 
             void await db.Rollback();
 
-            resdata.err = error.statusCode || 500;
-            resdata.status = error.statusCode || 500;
-            resdata.msg = resdata.status === 500 ? "Erro desconhecido" : error.message;
-
-            if (resdata.status === 500) GravarLog(`Controller Tipos Produtos - Erro inesperado: ${error.stack}`); 
+            applyControllerError(resdata, error, 'Controller Tipos Produtos'); 
             
         }
 
