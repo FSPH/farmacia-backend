@@ -17,15 +17,19 @@ Bibliotecas obrigatórias para consulta:
 - Zod
 - Jest
 
-Não utilizar memória interna quando houver documentação disponível no Context7.
-Priorizar sempre a documentação mais recente.
+# Regra obrigatorio para documentação da API:
+- Ao criar, modificar ou excluir uma rota, atualizar o arquivo farmacia/swagger.md atravez do        script swagger/swagger-docs.js
+
+# Uso Obrigatório
+- Não utilizar memória interna quando houver documentação disponível no Context7 e atualiza o 
+  repositorio memories no github. Priorizar sempre a documentação mais recente.
 
 Responsável:
 Ana Carolina
 
 Objetivo:
 Implementar:
-- Aplicar a skill express-rest-api da pasta farmacia/backend/.agents/skills
+- Aplicar a skill express-rest-api da pasta farmacia/backend/.agents/skills/express-rest-api
 - APIs REST 
 - regras de estoque
 - inventários

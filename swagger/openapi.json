@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Crediario API",
+    "title": "Farmacia Ambulatorial API",
     "version": "1.0.0",
-    "description": "Especificacao gerada automaticamente a partir das rotas Express do projeto."
+    "description": "Especificacao gerada automaticamente a partir das rotas Express do projeto farmacia."
   },
   "servers": [
     {
@@ -11,7 +11,2781 @@
       "description": "Ambiente local"
     }
   ],
-  "paths": {},
+  "paths": {
+    "/parametros/locais/buscar/{id_local}": {
+      "get": {
+        "tags": [
+          "Locais"
+        ],
+        "summary": "GET parametros locais buscar",
+        "parameters": [
+          {
+            "name": "id_local",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota id_local."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/locais/listar/{pesq}": {
+      "get": {
+        "tags": [
+          "Locais"
+        ],
+        "summary": "GET parametros locais listar",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/locais/salvar": {
+      "post": {
+        "tags": [
+          "Locais"
+        ],
+        "summary": "POST parametros locais salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocaisSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/locais/excluir/{local_id}": {
+      "delete": {
+        "tags": [
+          "Locais"
+        ],
+        "summary": "DELETE parametros locais excluir",
+        "parameters": [
+          {
+            "name": "local_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota local_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/boname/listar/{pesq}": {
+      "get": {
+        "tags": [
+          "Boname"
+        ],
+        "summary": "GET parametros boname listar",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/boname/listar_ativos/{pesq}": {
+      "get": {
+        "tags": [
+          "Boname"
+        ],
+        "summary": "GET parametros boname listar ativos",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/boname/buscar/{bona_id}": {
+      "get": {
+        "tags": [
+          "Boname"
+        ],
+        "summary": "GET parametros boname buscar",
+        "parameters": [
+          {
+            "name": "bona_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota bona_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/boname/salvar": {
+      "post": {
+        "tags": [
+          "Boname"
+        ],
+        "summary": "POST parametros boname salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BonameSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/boname/excluir/{bona_id}": {
+      "delete": {
+        "tags": [
+          "Boname"
+        ],
+        "summary": "DELETE parametros boname excluir",
+        "parameters": [
+          {
+            "name": "bona_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota bona_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/depositos/listar/{pesq}": {
+      "get": {
+        "tags": [
+          "Depositos"
+        ],
+        "summary": "GET parametros depositos listar",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/depositos/buscar/{dep_id}": {
+      "get": {
+        "tags": [
+          "Depositos"
+        ],
+        "summary": "GET parametros depositos buscar",
+        "parameters": [
+          {
+            "name": "dep_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota dep_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/depositos/salvar": {
+      "post": {
+        "tags": [
+          "Depositos"
+        ],
+        "summary": "POST parametros depositos salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositosSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/depositos/excluir/{dep_id}": {
+      "delete": {
+        "tags": [
+          "Depositos"
+        ],
+        "summary": "DELETE parametros depositos excluir",
+        "parameters": [
+          {
+            "name": "dep_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota dep_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/tipos_produtos/listar/{pesq}": {
+      "get": {
+        "tags": [
+          "Tipos Produtos"
+        ],
+        "summary": "GET parametros tipos produtos listar",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/tipos_produtos/buscar/{tipo_id}": {
+      "get": {
+        "tags": [
+          "Tipos Produtos"
+        ],
+        "summary": "GET parametros tipos produtos buscar",
+        "parameters": [
+          {
+            "name": "tipo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota tipo_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/tipos_produtos/buscar-codigo/{tipo_codigo}": {
+      "get": {
+        "tags": [
+          "Tipos Produtos"
+        ],
+        "summary": "GET parametros tipos produtos buscar-codigo",
+        "parameters": [
+          {
+            "name": "tipo_codigo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota tipo_codigo."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/tipos_produtos/salvar": {
+      "post": {
+        "tags": [
+          "Tipos Produtos"
+        ],
+        "summary": "POST parametros tipos produtos salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TiposProdutosSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/tipos_produtos/excluir/{tipo_id}": {
+      "delete": {
+        "tags": [
+          "Tipos Produtos"
+        ],
+        "summary": "DELETE parametros tipos produtos excluir",
+        "parameters": [
+          {
+            "name": "tipo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota tipo_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/diagnosticos/listar/{pesq}": {
+      "get": {
+        "tags": [
+          "Diagnosticos"
+        ],
+        "summary": "GET parametros diagnosticos listar",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/diagnosticos/listar_ativos/{pesq}": {
+      "get": {
+        "tags": [
+          "Diagnosticos"
+        ],
+        "summary": "GET parametros diagnosticos listar ativos",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/diagnosticos/buscar/{diag_id}": {
+      "get": {
+        "tags": [
+          "Diagnosticos"
+        ],
+        "summary": "GET parametros diagnosticos buscar",
+        "parameters": [
+          {
+            "name": "diag_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota diag_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/diagnosticos/salvar": {
+      "post": {
+        "tags": [
+          "Diagnosticos"
+        ],
+        "summary": "POST parametros diagnosticos salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosticosSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/diagnosticos/excluir/{diag_id}": {
+      "delete": {
+        "tags": [
+          "Diagnosticos"
+        ],
+        "summary": "DELETE parametros diagnosticos excluir",
+        "parameters": [
+          {
+            "name": "diag_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota diag_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/medicamentos/listar/{pesq}": {
+      "get": {
+        "tags": [
+          "Medicamentos"
+        ],
+        "summary": "GET parametros medicamentos listar",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/medicamentos/buscar/{med_id}": {
+      "get": {
+        "tags": [
+          "Medicamentos"
+        ],
+        "summary": "GET parametros medicamentos buscar",
+        "parameters": [
+          {
+            "name": "med_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota med_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/medicamentos/salvar": {
+      "post": {
+        "tags": [
+          "Medicamentos"
+        ],
+        "summary": "POST parametros medicamentos salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicamentosSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parametros/medicamentos/excluir/{med_id}": {
+      "delete": {
+        "tags": [
+          "Medicamentos"
+        ],
+        "summary": "DELETE parametros medicamentos excluir",
+        "parameters": [
+          {
+            "name": "med_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota med_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requisicoes/listar/{dat_ini}/{dat_fim}/{aprova}": {
+      "get": {
+        "tags": [
+          "Requisicoes"
+        ],
+        "summary": "GET requisicoes listar",
+        "parameters": [
+          {
+            "name": "dat_ini",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota dat_ini."
+          },
+          {
+            "name": "dat_fim",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota dat_fim."
+          },
+          {
+            "name": "aprova",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota aprova."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requisicoes/buscar/{req_id}": {
+      "get": {
+        "tags": [
+          "Requisicoes"
+        ],
+        "summary": "GET requisicoes buscar",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota req_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requisicoes/aprovar_por_requisicao/{req_id}/{user_aprova}": {
+      "get": {
+        "tags": [
+          "Requisicoes"
+        ],
+        "summary": "GET requisicoes aprovar por requisicao",
+        "parameters": [
+          {
+            "name": "req_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota req_id."
+          },
+          {
+            "name": "user_aprova",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota user_aprova."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/requisicoes/salvar": {
+      "post": {
+        "tags": [
+          "Requisicoes"
+        ],
+        "summary": "POST requisicoes salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequisicoesSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entradas/listar/{pesq}/{data_inicio}/{data_fim}": {
+      "get": {
+        "tags": [
+          "Entradas"
+        ],
+        "summary": "GET entradas listar",
+        "parameters": [
+          {
+            "name": "pesq",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota pesq."
+          },
+          {
+            "name": "data_inicio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota data_inicio."
+          },
+          {
+            "name": "data_fim",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota data_fim."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entradas/buscar/{ent_id}": {
+      "get": {
+        "tags": [
+          "Entradas"
+        ],
+        "summary": "GET entradas buscar",
+        "parameters": [
+          {
+            "name": "ent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Parametro de rota ent_id."
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entradas/salvar": {
+      "post": {
+        "tags": [
+          "Entradas"
+        ],
+        "summary": "POST entradas salvar",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token. Necessario quando a autenticacao estiver habilitada no ambiente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisicao invalida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso nao encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntradasSalvarPayload"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {
       "ApiResponse": {
@@ -47,27 +2821,46 @@
               }
             ]
           }
-        }
+        },
+        "required": [
+          "err",
+          "msg",
+          "status",
+          "data"
+        ]
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
           "err": {
             "type": "integer",
-            "example": 400
+            "example": 500
           },
           "msg": {
             "type": "string",
-            "example": "Requisicao invalida."
+            "example": "Erro interno do servidor."
           },
           "status": {
             "type": "integer",
-            "example": 400
+            "example": 500
           },
           "data": {
-            "type": "array",
-            "items": {},
-            "example": []
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -75,6 +2868,388 @@
           "msg",
           "status",
           "data"
+        ]
+      },
+      "BonameSalvarPayload": {
+        "type": "object",
+        "description": "Payload para criar ou atualizar um Boname.",
+        "properties": {
+          "bona_id": {
+            "type": "integer",
+            "example": 0,
+            "description": "ID do Boname. Use 0 para criar um novo registro."
+          },
+          "bona_codigo": {
+            "type": "string",
+            "example": "ABC123",
+            "description": "Codigo do Boname."
+          },
+          "bona_descr": {
+            "type": "string",
+            "example": "MEDICAMENTO EXEMPLO",
+            "description": "Descricao do Boname."
+          },
+          "bona_qt_ui": {
+            "type": "integer",
+            "example": 30,
+            "description": "Quantidade por unidade."
+          },
+          "bona_diag_id": {
+            "type": "integer",
+            "example": 12,
+            "description": "ID do diagnostico relacionado."
+          },
+          "bona_ativo": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "example": 1,
+            "description": "Indicador de status ativo."
+          }
+        },
+        "required": [
+          "bona_codigo",
+          "bona_descr",
+          "bona_qt_ui",
+          "bona_diag_id",
+          "bona_ativo"
+        ]
+      },
+      "DepositosSalvarPayload": {
+        "type": "object",
+        "description": "Payload para atualizar um deposito.",
+        "properties": {
+          "depo_id": {
+            "type": "integer",
+            "example": 1,
+            "description": "ID do deposito."
+          },
+          "depo_descr": {
+            "type": "string",
+            "example": "FARMACIA CENTRAL",
+            "description": "Descricao do deposito."
+          },
+          "depo_ativo": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "example": 1,
+            "description": "Indicador de status ativo."
+          }
+        },
+        "required": [
+          "depo_id",
+          "depo_descr",
+          "depo_ativo"
+        ]
+      },
+      "DiagnosticosSalvarPayload": {
+        "type": "object",
+        "description": "Payload para criar ou atualizar um diagnostico.",
+        "properties": {
+          "diag_id": {
+            "type": "integer",
+            "example": 0,
+            "description": "ID do diagnostico. Use 0 para criar um novo registro."
+          },
+          "diag_descr": {
+            "type": "string",
+            "example": "DIAGNOSTICO EXEMPLO",
+            "description": "Descricao do diagnostico."
+          },
+          "diag_ativo": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "example": 1,
+            "description": "Indicador de status ativo."
+          }
+        },
+        "required": [
+          "diag_descr",
+          "diag_ativo"
+        ]
+      },
+      "LocaisSalvarPayload": {
+        "type": "object",
+        "description": "Payload para atualizar um local.",
+        "properties": {
+          "local_id": {
+            "type": "integer",
+            "example": 10,
+            "description": "ID do local."
+          },
+          "local_descr": {
+            "type": "string",
+            "example": "AMBULATORIO",
+            "description": "Descricao do local."
+          },
+          "local_ativo": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "example": 1,
+            "description": "Indicador de status ativo."
+          }
+        },
+        "required": [
+          "local_id",
+          "local_descr",
+          "local_ativo"
+        ]
+      },
+      "MedicamentosSalvarPayload": {
+        "type": "object",
+        "description": "Payload para atualizar um medicamento.",
+        "properties": {
+          "med_id": {
+            "type": "integer",
+            "example": 101,
+            "description": "ID do medicamento."
+          },
+          "med_descr": {
+            "type": "string",
+            "example": "MEDICAMENTO EXEMPLO",
+            "description": "Descricao principal do medicamento."
+          },
+          "med_descr_coml": {
+            "type": "string",
+            "example": "NOME COMERCIAL",
+            "description": "Descricao comercial."
+          },
+          "med_und": {
+            "type": "string",
+            "example": "CX",
+            "description": "Unidade de medida."
+          },
+          "med_tipo_codigo": {
+            "type": "string",
+            "example": "ORAL",
+            "description": "Codigo do tipo de medicamento."
+          },
+          "med_tipo_med": {
+            "type": "string",
+            "example": "CONTROLADO",
+            "description": "Categoria ou tipo do medicamento."
+          },
+          "med_max": {
+            "type": "number",
+            "example": 100,
+            "description": "Estoque maximo sugerido."
+          },
+          "med_min": {
+            "type": "number",
+            "example": 10,
+            "description": "Estoque minimo sugerido."
+          },
+          "med_ui_cx": {
+            "type": "number",
+            "example": 20,
+            "description": "Unidades internas por caixa."
+          },
+          "med_bona_codigo": {
+            "type": "string",
+            "example": "ABC123",
+            "description": "Codigo Boname relacionado."
+          },
+          "med_alert": {
+            "type": "integer",
+            "example": 1,
+            "description": "Indicador de alerta do medicamento."
+          },
+          "med_diag_id": {
+            "type": "integer",
+            "example": 12,
+            "description": "ID do diagnostico relacionado."
+          },
+          "med_ativo": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "example": 1,
+            "description": "Indicador de status ativo."
+          }
+        },
+        "required": [
+          "med_id",
+          "med_descr",
+          "med_descr_coml",
+          "med_und",
+          "med_tipo_codigo",
+          "med_tipo_med",
+          "med_max",
+          "med_min",
+          "med_ui_cx",
+          "med_bona_codigo",
+          "med_alert",
+          "med_diag_id",
+          "med_ativo"
+        ]
+      },
+      "TiposProdutosSalvarPayload": {
+        "type": "object",
+        "description": "Payload para atualizar um tipo de produto.",
+        "properties": {
+          "tipo_id": {
+            "type": "integer",
+            "example": 1,
+            "description": "ID do tipo de produto."
+          },
+          "tipo_codigo": {
+            "type": "string",
+            "example": "ORAL",
+            "description": "Codigo do tipo de produto."
+          },
+          "tipo_descr": {
+            "type": "string",
+            "example": "MEDICAMENTO ORAL",
+            "description": "Descricao do tipo de produto."
+          },
+          "tipo_ativo": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "example": 1,
+            "description": "Indicador de status ativo."
+          }
+        },
+        "required": [
+          "tipo_id",
+          "tipo_codigo",
+          "tipo_descr",
+          "tipo_ativo"
+        ]
+      },
+      "EntradasSalvarPayload": {
+        "type": "object",
+        "description": "Payload para salvar uma entrada de estoque.",
+        "properties": {
+          "ent_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-03T10:00:00.000Z",
+            "description": "Data da entrada."
+          },
+          "ent_med_id": {
+            "type": "integer",
+            "example": 101,
+            "description": "ID do medicamento."
+          },
+          "ent_lote": {
+            "type": "string",
+            "example": "LOTE-001",
+            "description": "Lote da entrada."
+          },
+          "ent_qtde": {
+            "type": "number",
+            "example": 150,
+            "description": "Quantidade recebida."
+          },
+          "ent_doc": {
+            "type": "string",
+            "example": "NF-12345",
+            "description": "Documento fiscal ou referencia da entrada."
+          },
+          "ent_fornecido_por": {
+            "type": "string",
+            "example": "FORNECEDOR XYZ",
+            "description": "Nome do fornecedor."
+          }
+        },
+        "required": [
+          "ent_date",
+          "ent_med_id",
+          "ent_lote",
+          "ent_qtde",
+          "ent_doc",
+          "ent_fornecido_por"
+        ]
+      },
+      "RequisicoesSalvarPayload": {
+        "type": "object",
+        "description": "Payload para salvar uma requisicao de medicamento.",
+        "properties": {
+          "req_id": {
+            "type": "integer",
+            "example": 1001,
+            "description": "ID da requisicao."
+          },
+          "req_data": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-03T10:00:00.000Z",
+            "description": "Data da requisicao."
+          },
+          "req_med_id": {
+            "type": "integer",
+            "example": 101,
+            "description": "ID do medicamento."
+          },
+          "req_pac_id": {
+            "type": "integer",
+            "example": 5001,
+            "description": "ID do paciente."
+          },
+          "req_qtde": {
+            "type": "number",
+            "example": 2,
+            "description": "Quantidade requisitada."
+          },
+          "req_lote": {
+            "type": "string",
+            "example": "LOTE-001",
+            "description": "Lote do item requisitado."
+          },
+          "req_val_mes": {
+            "type": "integer",
+            "example": 12,
+            "description": "Mes de validade do lote."
+          },
+          "req_val_ano": {
+            "type": "integer",
+            "example": 2027,
+            "description": "Ano de validade do lote."
+          },
+          "req_dep_id": {
+            "type": "integer",
+            "example": 2,
+            "description": "ID do deposito."
+          },
+          "req_local_id": {
+            "type": "integer",
+            "example": 10,
+            "description": "ID do local solicitante."
+          },
+          "req_tipo": {
+            "type": "string",
+            "example": "NORMAL",
+            "description": "Tipo da requisicao."
+          }
+        },
+        "required": [
+          "req_id",
+          "req_data",
+          "req_med_id",
+          "req_pac_id",
+          "req_qtde",
+          "req_lote",
+          "req_val_mes",
+          "req_val_ano",
+          "req_dep_id",
+          "req_local_id",
+          "req_tipo"
         ]
       }
     }
